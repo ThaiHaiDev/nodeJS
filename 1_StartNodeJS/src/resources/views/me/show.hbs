@@ -1,0 +1,68 @@
+<div class="mt-4">
+    <h3>Khóa học của tôi</h3>
+
+    <table class="table" style="background-color: white;">
+        <thead>
+            <tr>
+            <th scope="col">STT</th>
+            <th scope="col">Tên khóa học</th>
+            <th scope="col">Video id</th>
+            <th scope="col" colspan="2">Thời gian tạo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each courses}}
+            <tr>
+            <th scope="row">{{sum @index 1}}</th>
+            <td>{{this.name}}</td>
+            <td>{{this.videoid}}</td>
+            <td>{{this.createdAt}}/td>
+            <td>
+                <a href="/courses/{{this._id}}/edit" class="btn btn-link">Sửa</a>
+                <a href="" class="btn btn-link btn-delete" data-id="{{this._id}}" data-toggle="modal" data-target="#deletemodal">Xóa</a>
+            </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deletemodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="btn-delete-course" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{!-- Delete Form --}}
+<form name="delete-course-form" method="post"></form>
+
+<script>
+    const deleteBtns = Array.from( document.getElementsByClassName('btn-delete')); // lấy tất cả các button delete dưới dạng mảng
+    const deleteConfirm = document.querySelector('#btn-delete-course')
+    const deleteForm = document.forms['delete-course-form']; // lấy element form thông qua name của form
+    let courseId;
+    for(const deleteBtn of deleteBtns){
+        deleteBtn.onclick = function(e){
+            courseId= e.target.dataset.id; // khi onclick vào button xóa của khóa học nào thì sẽ nhận được id của khóa học đó
+            deleteConfirm.onclick= function(e){  // sau đó click vào button confirm xóa để 
+                deleteForm.action = `/courses/${courseId}?_method=DELETE`; // truyền  url chứa id của từng khóa học vào action và với method DELETE
+                deleteForm.submit(); // và submit form .
+            }
+        }
+    }
+</script>
