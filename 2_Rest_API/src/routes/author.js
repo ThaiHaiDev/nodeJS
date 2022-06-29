@@ -1,8 +1,9 @@
 const express = require('express')
-const authorController = require('../app/controllers/authorController')
 const router = express.Router()
 
+const authorController = require('../app/controllers/authorController')
+
 // Add Author
-router.post('/', authorController.addAuthor)
+router.post('/v1/author', authorController.addAuthor)
 
 module.exports = router
