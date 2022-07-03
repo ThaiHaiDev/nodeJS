@@ -3,7 +3,6 @@ const cors = require('cors');
 const app = express();
 const mongoose = require('mongoose');
 const morgan = require('morgan');
-const dotenv = require('dotenv');
 
 const port = 3000
 const db = require('./config/db')  // Connect data
