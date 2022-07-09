@@ -26,6 +26,30 @@ const authController = {
         }
     },
 
+    // GENERATE ACCESS TOKEN
+    generateAccessToken: (user) => {
+        return jwt.sign(
+            {
+                id: user.id,
+                admin: user.isAdmin
+            },
+            process.env.JWT_ACCESS_KEY,
+            { expiresIn: "10d"}
+        )
+    },
+
+    // GENERATE REFRESH TOKEN
+    generateRefreshToken: (user) => {
+        return jwt.sign(
+            {
+                id: user.id,
+                admin: user.isAdmin
+            },
+            process.env.JWT_REFRESH_KEY,
+            { expiresIn: "100d"}
+        )
+    },
+
     // LOGIN
     async loginUser (req, res) {
         try {
@@ -40,17 +64,11 @@ const authController = {
                 res.status(404).json('Wrong Password...')
             }
             if (user && validPassword) {
-                const accessToken = jwt.sign({
-                    id: user.id,
-                    admin: user.isAdmin
-                },
-                process.env.JWT_ACCESS_KEY,
-                {
-                    expiresIn: "100s"
-                })
+                const accessToken = authController.generateAccessToken(user);
+                const refreshToken = authController.generateRefreshToken(user);
 
                 const { password, ...others } = user._doc;
-                res.status(200).json({others, accessToken})
+                res.status(200).json({others, accessToken, refreshToken})
             }
         } catch (error) {
             res.status(500).json(error)

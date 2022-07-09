@@ -8,6 +8,6 @@ const middlewareController = require('../app/controller/middlewareController')
 router.get('/', middlewareController.verifyToken, userController.getAllUsers)
 
 // Delete User 
-router.delete('/:id', userController.deleteUser)
+router.delete('/:id', middlewareController.verifyTokenAdmin, userController.deleteUser)
 
 module.exports = router
