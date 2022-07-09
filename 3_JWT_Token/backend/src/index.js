@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 
-const port = 3000
+const port = 3004
 const db = require('./config/db')  // Connect data
 const route = require('./routes')
 

@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-// middleware như 1 thằng ở giữa, nếu thảo hết điều kiện này nó mới cho đi tiếp, không thỏa thì trả lại ở else
+// middleware như 1 thằng ở giữa, nếu thoả hết điều kiện này nó mới cho đi tiếp, không thỏa thì trả lại ở else
 
 const middlewareController = {
     // verifyToken
