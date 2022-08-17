@@ -47,7 +47,7 @@ const authController = {
                 admin: user.isAdmin
             },
             process.env.JWT_REFRESH_KEY,
-            { expiresIn: "100d" }
+            { expiresIn: "1000s" }
         )
     },
 
@@ -70,15 +70,17 @@ const authController = {
                 refreshTokens.push(refreshToken);
 
                 // save refreshToken trong Cookies
+                res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+                res.setHeader('Access-Control-Allow-Credentials',true);
                 res.cookie('refreshToken', refreshToken, {
-                    httpOnly: true,
+                    httpOnly: false,
                     secure: false,  // Khi làm để false, nào deploy thì để true cho bảo vệ
                     path: '/',
                     sameSite: 'strict'
                 })
 
                 const { password, ...others } = user._doc;
-                res.status(200).json({others, accessToken})
+                res.status(200).json({...others, accessToken, refreshToken})
             }
         } catch (error) {
             res.status(500).json(error)
@@ -91,27 +93,34 @@ const authController = {
         const refreshToken = req.cookies.refreshToken;
 
         if (!refreshToken) return res.status(401).json("You're not authenticated")
-        if (!refreshTokens.includes(refreshToken)) { // Check refreshToken đó phải là của chính user login vào
-            return res.status(403).json("Refresh token is not valid");
-        }
+        // if (!refreshTokens.includes(refreshToken)) { // Check refreshToken đó phải là của chính user login vào
+        //     return res.status(403).json("Refresh token is not valid");
+        // }
         jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY, (err, user) => {
             if(err) {
                 console.log(err);
             }
-            refreshTokens = refreshTokens.filter(token => token !== refreshToken)  // Lọc cái refreshToken đó ra
+            // refreshTokens = refreshTokens.filter(token => token !== refreshToken)  // Lọc cái refreshToken đó ra
 
             // Create new accessToken, refreshToken
-            const newAccessToken = authController.generateAccessToken(user);
-            const newRefreshToken = authController.generateRefreshToken(user);
-            refreshTokens.push(newRefreshToken);
+            const newAccessToken = jwt.sign(
+                {
+                    id: user.id,
+                    admin: user.admin
+                },
+                process.env.JWT_ACCESS_KEY,
+                { expiresIn: "30s" }
+            )
+            // const newRefreshToken = authController.generateRefreshToken(user);
+            // refreshTokens.push(newRefreshToken);
 
             // save refreshToken trong Cookies
-            res.cookie('refreshToken', newRefreshToken, {
-                httpOnly: true,
-                secure: false,  // Khi làm để false, nào deploy thì để true cho bảo vệ
-                path: '/',
-                sameSite: 'strict'
-            })
+            // res.cookie('refreshToken', newRefreshToken, {
+            //     httpOnly: true,
+            //     secure: false,  // Khi làm để false, nào deploy thì để true cho bảo vệ
+            //     path: '/',
+            //     sameSite: 'strict'
+            // })
 
             res.status(200).json({ accessToken: newAccessToken })
         })

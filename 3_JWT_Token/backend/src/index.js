@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 
-const port = 3000
+const port = 3001
 const db = require('./config/db')  // Connect data
 const route = require('./routes')
 
@@ -17,7 +17,14 @@ app.use(bodyParser.json())
 // Connect Database
 db.connect()
 
-app.use(cors())
+// Khi xài cookies thì phải có cors config này với url là của FE
+app.use(cors({
+    origin: [
+        "http://localhost:3000",
+    ],
+    credentials: true,
+}))
+
 app.use(cookieParser())
 app.use(express.json())
 
