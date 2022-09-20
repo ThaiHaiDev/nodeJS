@@ -28,25 +28,32 @@ server.on('request', (req, res) => {
             if (req.method == 'POST') {
                 req.on('data', (data) => {
                     const newFriend = data.toString();
-                    if (mygroup.filter(e => e.id === JSON.parse(newFriend).id).length > 0) {
+                    if (items[2].toString() !== JSON.parse(newFriend).id.toString()) {
                         res.statusCode = 404;
                         res.end('Not valid'); 
                     } else {
-                        if (teamGroup22.filter(e => e.id === JSON.parse(newFriend).id).length > 0) {
-                            mygroup.push(JSON.parse(newFriend));
-                            req.pipe(res);
-                        } else {
+                        if (mygroup.filter(e => e.id === JSON.parse(newFriend).id).length > 0) {
                             res.statusCode = 404;
                             res.end('Not valid'); 
+                        } else {
+                            if (teamGroup22.filter(e => e.id === JSON.parse(newFriend).id).length > 0) {
+                                mygroup.push(JSON.parse(newFriend));
+                                res.end(JSON.stringify(mygroup))
+                            } else {
+                                res.statusCode = 404;
+                                res.end('Not valid'); 
+                            }
                         }
                     }
+                    
                 })
             } else {
                 const student = mygroup.filter(value => value.id === parseInt(items[2]))
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
                 if (items.length < 3) {
-                    res.end(JSON.stringify(mygroup))
+                    res.statusCode = 404;
+                    res.end('Not valid'); 
                 } else {
                     res.end(JSON.stringify(student[0]))
                 }
