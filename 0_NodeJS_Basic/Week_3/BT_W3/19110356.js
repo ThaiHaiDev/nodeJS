@@ -6,13 +6,13 @@ const PORT = 5000;
 const server = http.createServer();
 
 const teamGroup22 = [
-    {id:19110356,name:'Nguyen Thai Hai'},
-    {id:19110462, name: 'Hoang Minh Thang'},
-    {id: 19110, name: 'Nguyen Huu Hieu'}
+    {id:"19110356",name:'Nguyen Thai Hai'},
+    {id:"19110462", name: 'Hoang Minh Thang'},
+    {id:"19110364", name: 'Nguyen Huu Hieu'}
 ];
 
 const mygroup = [
-    {id:19110356,name:'Nguyen Thai Hai'}
+    {id:"19110356",name:'Nguyen Thai Hai'}
 ]
 
 server.on('request', (req, res) => {
@@ -48,14 +48,19 @@ server.on('request', (req, res) => {
                     
                 })
             } else {
-                const student = mygroup.filter(value => value.id === parseInt(items[2]))
-                res.statusCode = 200;
-                res.setHeader('Content-Type', 'application/json');
-                if (items.length < 3) {
+                const student = mygroup.filter(value => value.id === items[2])
+                if (mygroup.filter(e => e.id === items[2]).length === 0) {
                     res.statusCode = 404;
                     res.end('Not valid'); 
                 } else {
-                    res.end(JSON.stringify(student[0]))
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    if (items.length < 3) {
+                        res.statusCode = 404;
+                        res.end('Not valid'); 
+                    } else {
+                        res.end(JSON.stringify(student[0]));
+                    }
                 }
             }
             break;
@@ -65,7 +70,7 @@ server.on('request', (req, res) => {
             if (items.length < 3) {
                 res.end(JSON.stringify(mygroup))
             } else {
-                const student = mygroup.filter(value => value.id === parseInt(items[2]))
+                const student = mygroup.filter(value => value.id === items[2])
                 if(student.length !== 0) {
                     res.write(`<html><body><ul><li>${student[0].name}</li></ul></body></html>`)
                 } else {
