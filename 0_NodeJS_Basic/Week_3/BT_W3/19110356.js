@@ -70,11 +70,15 @@ server.on('request', (req, res) => {
             if (items.length < 3) {
                 res.end(JSON.stringify(mygroup))
             } else {
-                const student = mygroup.filter(value => value.id === items[2])
-                if(student.length !== 0) {
-                    res.write(`<html><body><ul><li>${student[0].name}</li></ul></body></html>`)
+                if (items[2] === '') {
+                    res.end(JSON.stringify(mygroup))
                 } else {
-                    res.write(`<html><body>Not valid</body></html>`)
+                    const student = mygroup.filter(value => value.id === items[2])
+                    if(student.length !== 0) {
+                        res.write(`<html><body><ul><li>${student[0].name}</li></ul></body></html>`)
+                    } else {
+                        res.write(`<html><body>Not valid</body></html>`)
+                    }
                 }
             }
             res.end();
